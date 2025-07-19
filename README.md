@@ -102,7 +102,7 @@ Replace `<your-entry-file>.ts` with the name of your main TypeScript file.
 
 ## 📄 License
 
-MIT
+[MIT](./LICENSE)
 
 ---
 
