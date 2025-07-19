@@ -1,5 +1,7 @@
 # OxarionJS 🚀
 
+![npm downloads](https://img.shields.io/npm/dm/oxarionjs?style=flat-square&logo=npm&color=blue)
+
 **OxarionJS** is a powerful, modern backend framework built on top of [Bun](https://bun.sh), designed for speed, simplicity, and full TypeScript support.
 
 ---
@@ -22,7 +24,7 @@
 
 ### 1. Prerequisite: Install Bun
 
-OxarionJS requires [Bun](https://bun.sh) (v1.2.18 or higher).  
+OxarionJS requires [Bun](https://bun.sh) (v1.2.18 or higher).
 If you don't have Bun installed, get it from [https://bun.sh](https://bun.sh).
 
 ### 2. Install OxarionJS
@@ -34,38 +36,26 @@ bun add oxarionjs
 ### 3. Create Your First Server
 
 ```typescript
-import Oxarion, { RoutesWrapper, Middleware } from "oxarionjs";
-
-// Define your routes
-const routes = new RoutesWrapper().inject((r) => {
-  r.addHandler("GET", "/hello", (_, res) => {
-    res.json({ message: "Hello from Oxarion!" });
-  });
-
-  r.addHandler("GET", "/user/[id]", (req, res) => {
-    const userId = req.getParam("id");
-    res.json({ userId, message: "User details" });
-  });
-});
+import Oxarion, { Middleware } from "oxarionjs";
 
 // Start the server
 Oxarion.start({
   port: 3000,
   debugRoutes: true,
 
+  // Define your routes
   httpHandler: (router) => {
     router.addHandler("GET", "/", (_, res) => {
       res.json({ message: "Welcome to Oxarion!" });
     });
-
-    router.injectWrapper("/api", routes);
   },
 
+  // This function is called after httpHandler is registered
   safeMwRegister: (router) => {
     router.middlewareChain(
       "/",
       [Middleware.cors(), Middleware.json(), Middleware.urlencoded()],
-      true
+      true,
     );
   },
 });
@@ -95,7 +85,7 @@ Replace `<your-entry-file>.ts` with the name of your main TypeScript file.
 
 ## 📦 Requirements
 
-- **Bun**: v1.2.18 or higher  
+- **Bun**: v1.2.18 or higher
   [Install Bun →](https://bun.sh)
 
 ---
@@ -106,5 +96,5 @@ Replace `<your-entry-file>.ts` with the name of your main TypeScript file.
 
 ---
 
-> **Need help or want to contribute?**  
+> **Need help or want to contribute?**
 > Check out the [issues](https://github.com/VoxlD/OxarionJs/issues) or open a pull request!

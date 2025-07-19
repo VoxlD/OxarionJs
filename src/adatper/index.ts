@@ -40,15 +40,13 @@ export class Oxarion {
 
     Oxarion.router = new Router();
     options.httpHandler(Oxarion.router);
-
     if (options.safeMwRegister) options.safeMwRegister(Oxarion.router);
-
     Oxarion.router.finalize_routes();
 
     console.log(
       `[Oxarion] Server started on: http://${
         host || Oxarion.DEFAULT_HOST
-      }:${port}`
+      }:${port}`,
     );
 
     Oxarion.server = Bun.serve({
@@ -67,7 +65,7 @@ export class Oxarion {
 
         if (debugRoutes && Bun.env.NODE_ENV === "production")
           console.warn(
-            "[Oxarion] Warning: debugRoutes is enabled in production. This will severely impact performance."
+            "[Oxarion] Warning: debugRoutes is enabled in production. This will severely impact performance.",
           );
 
         let ws_wacther: WSWatcher | undefined;
@@ -98,9 +96,9 @@ export class Oxarion {
           if (!match) {
             if (debug) {
               const end = performance.now();
-              const path = new URL(url).pathname;
+              const path = parseURLPath(url);
               console.log(
-                `${method} ${path} 404 (${(end - start).toFixed(2)}ms)`
+                `${method} ${path} 404 (${(end - start).toFixed(2)}ms)`,
               );
             }
             return Oxarion.not_found_res;
@@ -111,7 +109,7 @@ export class Oxarion {
           const res = new OxarionResponse(
             pagesDir || "pages",
             cachePages !== false,
-            req
+            req,
           );
 
           await route.handler(ox_req, res);
@@ -119,11 +117,11 @@ export class Oxarion {
 
           if (debug) {
             const end = performance.now();
-            const path = new URL(url).pathname;
+            const path = parseURLPath(url);
             console.log(
               `${method} ${path} ${response.status} (${(end - start).toFixed(
-                2
-              )}ms)`
+                2,
+              )}ms)`,
             );
           }
 
@@ -141,14 +139,14 @@ export class Oxarion {
         message(ws, message) {
           (ws as ServerWebSocket<WSContext>).data?.handler?.onMessage?.(
             ws,
-            message
+            message,
           );
         },
         close(ws, code, reason) {
           (ws as ServerWebSocket<WSContext>).data?.handler?.onClose?.(
             ws,
             code,
-            reason
+            reason,
           );
         },
         drain(ws) {

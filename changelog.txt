@@ -4,3 +4,7 @@
 # Version 1.0.1
 - Removed pages dir from projects
 - Added WebSocket example
+
+# Version 1.0.2
+- Added new example (middleware)
+- Changed new URL() to parseURLPath in adapter
