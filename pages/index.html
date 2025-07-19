@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oxarion Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .feature {
+        background: #e8f4fd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border-left: 4px solid #2196f3;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+      }
+      button {
+        background: #2196f3;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #1976d2;
+      }
+      .websocket-status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+      }
+      .connected {
+        background: #d4edda;
+        color: #155724;
+      }
+      .disconnected {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Oxarion Framework Test Page</h1>
+
+      <div class="feature">
+        <h2>Features Tested:</h2>
+        <ul>
+          <li>✅ HTTP routing with parameters</li>
+          <li>✅ Middleware support</li>
+          <li>✅ WebSocket handling</li>
+          <li>✅ Form data parsing</li>
+          <li>✅ File compression (gzip)</li>
+          <li>✅ Static file serving</li>
+          <li>✅ Route caching</li>
+          <li>✅ Query parameters</li>
+          <li>✅ Custom headers</li>
+          <li>✅ Status codes</li>
+          <li>✅ Redirects</li>
+        </ul>
+      </div>
+
+      <div class="test-section">
+        <h3>API Tests</h3>
+        <button onclick="testBasicRoute()">Test Basic Route</button>
+        <button onclick="testParams()">Test Parameters</button>
+        <button onclick="testQuery()">Test Query Params</button>
+        <button onclick="testHeaders()">Test Custom Headers</button>
+        <button onclick="testError()">Test Error Response</button>
+      </div>
+
+      <div class="test-section">
+        <h3>File Upload Test</h3>
+        <input type="file" id="fileInput" multiple />
+        <input type="text" id="textField" placeholder="Enter some text" />
+        <button onclick="testUpload()">Upload Files</button>
+      </div>
+
+      <div class="test-section">
+        <h3>WebSocket Test</h3>
+        <div id="wsStatus" class="websocket-status disconnected">
+          Disconnected
+        </div>
+        <input type="text" id="wsMessage" placeholder="Enter message" />
+        <button onclick="sendMessage()">Send Message</button>
+        <button onclick="connectWS()">Connect</button>
+        <button onclick="disconnectWS()">Disconnect</button>
+        <div id="wsMessages"></div>
+      </div>
+
+      <div class="test-section">
+        <h3>Compression Test</h3>
+        <p>
+          This page is served with gzip compression when supported by the
+          browser.
+        </p>
+        <button onclick="testCompression()">Test Compression</button>
+      </div>
+    </div>
+
+    <script>
+      let ws = null;
+
+      async function testBasicRoute() {
+        try {
+          const response = await fetch("/test/hello");
+          const data = await response.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      async function testParams() {
+        try {
+          const response = await fetch("/test/user/123");
+          const data = await response.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      async function testQuery() {
+        try {
+          const response = await fetch("/test/search?q=test&page=1");
+          const data = await response.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      async function testHeaders() {
+        try {
+          const response = await fetch("/test/headers");
+          const data = await response.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      async function testError() {
+        try {
+          const response = await fetch("/test/error");
+          const data = await response.json();
+          alert(`Status: ${response.status}\n${JSON.stringify(data, null, 2)}`);
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      async function testUpload() {
+        const formData = new FormData();
+        const files = document.getElementById("fileInput").files;
+        const text = document.getElementById("textField").value;
+
+        if (text) {
+          formData.append("text", text);
+        }
+
+        for (let file of files) {
+          formData.append("files", file);
+        }
+
+        try {
+          const response = await fetch("/test/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          alert(JSON.stringify(data, null, 2));
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      function connectWS() {
+        if (ws) {
+          ws.close();
+        }
+
+        ws = new WebSocket("ws://localhost:3000/ws");
+
+        ws.onopen = function () {
+          document.getElementById("wsStatus").textContent = "Connected";
+          document.getElementById("wsStatus").className =
+            "websocket-status connected";
+          addMessage("System: Connected to WebSocket");
+        };
+
+        ws.onmessage = function (event) {
+          addMessage("Server: " + event.data);
+        };
+
+        ws.onclose = function () {
+          document.getElementById("wsStatus").textContent = "Disconnected";
+          document.getElementById("wsStatus").className =
+            "websocket-status disconnected";
+          addMessage("System: Disconnected from WebSocket");
+          ws = null;
+        };
+
+        ws.onerror = function (error) {
+          addMessage("Error: " + error);
+        };
+      }
+
+      function disconnectWS() {
+        if (ws) {
+          ws.close();
+        }
+      }
+
+      function sendMessage() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          const message = document.getElementById("wsMessage").value;
+          if (message) {
+            ws.send(message);
+            addMessage("Client: " + message);
+            document.getElementById("wsMessage").value = "";
+          }
+        } else {
+          alert("WebSocket is not connected");
+        }
+      }
+
+      function addMessage(message) {
+        const messagesDiv = document.getElementById("wsMessages");
+        const messageElement = document.createElement("div");
+        messageElement.textContent = message;
+        messageElement.style.padding = "5px";
+        messageElement.style.margin = "2px 0";
+        messageElement.style.backgroundColor = "#f0f0f0";
+        messageElement.style.borderRadius = "3px";
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      async function testCompression() {
+        try {
+          const response = await fetch("/test/page");
+          const encoding = response.headers.get("content-encoding");
+          const size = response.headers.get("content-length");
+          alert(
+            `Compression: ${encoding || "none"}\nSize: ${
+              size || "unknown"
+            } bytes`
+          );
+        } catch (error) {
+          alert("Error: " + error.message);
+        }
+      }
+
+      // Auto-connect WebSocket on page load
+      window.addEventListener("load", function () {
+        setTimeout(connectWS, 1000);
+      });
+    </script>
+  </body>
+</html>

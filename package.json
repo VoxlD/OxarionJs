@@ -1,0 +1,33 @@
+{
+  "name": "oxarionjs",
+  "version": "1.0.0",
+  "author": "VoxlD",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VoxlD/OxarionJs"
+  },
+  "description": "Powerfull Backend Framework Build on top of BunJS",
+  "homepage": "https://github.com/VoxlD/",
+  "keywords": [
+    "bun",
+    "framework",
+    "backend",
+    "webserver",
+    "typescript"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "dev": "bun src/index.ts",
+    "build": "tsup",
+    "test": "bun test",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.18",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
+}
