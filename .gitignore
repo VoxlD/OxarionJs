@@ -3,6 +3,7 @@
 bun.lockb
 test.ts
 **/*.test.ts
+pages/
 
 # Logs
 

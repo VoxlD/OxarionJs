@@ -1,6 +1,7 @@
 node_modules/
 src/
 test/
+pages/
 
 package-lock.json
 bun.lock

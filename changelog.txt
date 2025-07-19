@@ -1,0 +1,6 @@
+# Version 1.0.0
+- First Release
+
+# Version 1.0.1
+- Removed pages dir from projects
+- Added WebSocket example
