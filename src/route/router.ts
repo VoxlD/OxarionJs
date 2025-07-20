@@ -7,7 +7,7 @@ import type {
   Handler,
   MiddlewareFn,
 } from "../types";
-import type { RoutesWrapper } from "./wrapper";
+import { symbl_get_routes, type RoutesWrapper } from "./wrapper";
 import { compose_middleware } from "../utils/middleware";
 import { parseURLPath } from "../utils/parse_url";
 
@@ -109,13 +109,14 @@ export class Router {
     if (
       typeof wrapper !== "object" ||
       wrapper === null ||
-      typeof wrapper.getRoutes !== "function"
+      typeof wrapper[symbl_get_routes] !== "function"
     )
       throw new TypeError(
         "[Oxarion] injectWrapper: wrapper must be a RoutesWrapper"
       );
+
     const base_clean = base.replace(/\/$/, "");
-    const routes = wrapper.getRoutes();
+    const routes = wrapper[symbl_get_routes]();
     let i = routes.length;
 
     while (i--) {

@@ -34,6 +34,13 @@ export interface OxarionOptions {
   reusePort?: boolean;
 
   /**
+   * Whether to check for the latest version of the package on startup.
+   * If true, the server will attempt to check for updates.
+   * @default true
+   */
+  checkLatestVersion?: boolean;
+
+  /**
    * Whether the `IPV6_V6ONLY` flag should be set.
    * If true, the server will only accept IPv6 connections.
    * @default false

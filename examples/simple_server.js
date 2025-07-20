@@ -1,4 +1,4 @@
-import Oxarion from "../src";
+import Oxarion from "../dist";
 
 Oxarion.start({
   port: 3000,

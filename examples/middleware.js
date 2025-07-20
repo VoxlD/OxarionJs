@@ -1,4 +1,4 @@
-import Oxarion, { Middleware } from "../src";
+import Oxarion, { Middleware } from "../dist";
 
 Oxarion.start({
   port: 3000,

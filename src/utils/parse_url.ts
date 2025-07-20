@@ -1,28 +1,30 @@
 function parseURLPath(url: string): string {
+  const len = url.length;
   let path_start = 0;
-  let path_end = url.length;
+  let path_end = len;
   let i = 0;
 
-  while (i < url.length - 2) {
-    if (url[i + 1] === "/" && url[i + 2] === "/") {
+  for (; i < len - 2; i++) {
+    if (url.charCodeAt(i + 1) === 47 && url.charCodeAt(i + 2) === 47) {
       i += 3;
-      while (i < url.length && url[i] !== "/") i++;
-      path_start = i;
+
+      for (; i < len; i++)
+        if (url.charCodeAt(i) === 47) {
+          path_start = i;
+          break;
+        }
+
       break;
     }
-    i++;
   }
 
-  i = path_start;
-  while (i < url.length) {
-    if (url[i] === "?") {
+  for (i = path_start; i < len; i++)
+    if (url.charCodeAt(i) === 63) {
       path_end = i;
       break;
     }
-    i++;
-  }
 
-  return url.slice(path_start, path_end);
+  return url.substring(path_start, path_end);
 }
 
 export { parseURLPath };

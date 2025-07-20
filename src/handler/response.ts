@@ -186,15 +186,16 @@ export class OxarionResponse {
 
     let html = page_cache.get(full_path);
 
-    if (html === undefined) {
+    if (html === undefined)
       try {
         html = await readFile(full_path, "utf8");
         if (this.cache_pages) page_cache.set(full_path, html);
       } catch {
-        this.setStatus(404).send("Page Not Found");
+        this.setStatus(404).send(
+          "Page Mismatch: The requested page does not match any available pages."
+        );
         return;
       }
-    }
 
     if (!compression)
       return new PageSendController(
@@ -262,7 +263,9 @@ export class OxarionResponse {
       if (contentType) this.setHeader("Content-Type", contentType);
       this.send(data);
     } catch {
-      this.setStatus(404).send("File Not Found");
+      this.setStatus(404).send(
+        "File Mismatch: The requested file does not match any available files."
+      );
     }
     return this;
   }

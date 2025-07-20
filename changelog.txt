@@ -8,3 +8,13 @@
 # Version 1.0.2
 - Added new example (middleware)
 - Changed new URL() to parseURLPath in adapter
+
+# Version 1.1.0
+- Set debugRoutes default to false
+- Added update announcer (can be disabled with `checkLatestVersion: false`)
+- Added Bun version checker
+- Added example usage of RoutesWrapper classes
+- Changed the parseURLPath logic
+- Changed tsup to Bun native bundler
+- Changed sendPage message when the page is mismatch
+- Changed sendFile message when the file is mismatch

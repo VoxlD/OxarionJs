@@ -5,6 +5,8 @@ import { WSWatcher } from "../handler/ws";
 import { Router } from "../route/router";
 import type { OxarionOptions, WSContext } from "../types";
 import { parseURLPath } from "../utils/parse_url";
+import { check_update } from "../utils/check_update";
+import { check_bun_version } from "../utils/version_check";
 
 export class Oxarion {
   private static readonly DEFAULT_HOST = "127.0.0.1";
@@ -21,7 +23,7 @@ export class Oxarion {
    * @returns The Bun server instance
    * @throws If Bun is not available
    */
-  static start(options: OxarionOptions) {
+  static async start(options: OxarionOptions) {
     if (typeof Bun === "undefined")
       throw new Error("[Oxarion] Please install BunJs");
 
@@ -36,6 +38,7 @@ export class Oxarion {
       debugRoutes,
       cachePages,
       wsHandler,
+      checkLatestVersion,
     } = options;
 
     Oxarion.router = new Router();
@@ -43,10 +46,15 @@ export class Oxarion {
     if (options.safeMwRegister) options.safeMwRegister(Oxarion.router);
     Oxarion.router.finalize_routes();
 
+    const bun_ver = await check_bun_version();
+    if (!bun_ver) return;
+
+    if (checkLatestVersion !== false) await check_update();
+
     console.log(
       `[Oxarion] Server started on: http://${
         host || Oxarion.DEFAULT_HOST
-      }:${port}`,
+      }:${port}`
     );
 
     Oxarion.server = Bun.serve({
@@ -58,14 +66,12 @@ export class Oxarion {
       unix,
 
       fetch: async (req, server) => {
-        const debug = debugRoutes !== false;
         let start = 0;
 
-        if (debug) start = performance.now();
-
+        if (debugRoutes) start = performance.now();
         if (debugRoutes && Bun.env.NODE_ENV === "production")
           console.warn(
-            "[Oxarion] Warning: debugRoutes is enabled in production. This will severely impact performance.",
+            "[Oxarion] Warning: debugRoutes is enabled in production. This will severely impact performance."
           );
 
         let ws_wacther: WSWatcher | undefined;
@@ -94,11 +100,11 @@ export class Oxarion {
 
           const match = Oxarion.router!.match_fast(method, url);
           if (!match) {
-            if (debug) {
+            if (debugRoutes) {
               const end = performance.now();
               const path = parseURLPath(url);
               console.log(
-                `${method} ${path} 404 (${(end - start).toFixed(2)}ms)`,
+                `${method} ${path} 404 (${(end - start).toFixed(2)}ms)`
               );
             }
             return Oxarion.not_found_res;
@@ -109,19 +115,19 @@ export class Oxarion {
           const res = new OxarionResponse(
             pagesDir || "pages",
             cachePages !== false,
-            req,
+            req
           );
 
           await route.handler(ox_req, res);
           const response = res.toResponse();
 
-          if (debug) {
+          if (debugRoutes) {
             const end = performance.now();
             const path = parseURLPath(url);
             console.log(
               `${method} ${path} ${response.status} (${(end - start).toFixed(
-                2,
-              )}ms)`,
+                2
+              )}ms)`
             );
           }
 
@@ -139,14 +145,14 @@ export class Oxarion {
         message(ws, message) {
           (ws as ServerWebSocket<WSContext>).data?.handler?.onMessage?.(
             ws,
-            message,
+            message
           );
         },
         close(ws, code, reason) {
           (ws as ServerWebSocket<WSContext>).data?.handler?.onClose?.(
             ws,
             code,
-            reason,
+            reason
           );
         },
         drain(ws) {

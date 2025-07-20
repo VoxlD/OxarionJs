@@ -2,13 +2,14 @@
 
 ![npm downloads](https://img.shields.io/npm/dm/oxarionjs?style=flat-square&logo=npm&color=blue)
 
-**OxarionJS** is a powerful, modern backend framework built on top of [Bun](https://bun.sh), designed for speed, simplicity, and full TypeScript support.
+**OxarionJS** is a powerful, modern, and lightweight backend framework built on top of [Bun](https://bun.sh), designed for speed, simplicity, and full TypeScript support.
 
 ---
 
 ## ⚡ Why OxarionJS?
 
 - **Ultra Fast**: Built on Bun for maximum performance.
+- **Lightweight**: Tiny footprint, just 48kb for the core modules.
 - **TypeScript First**: Enjoy full type safety and modern development experience.
 - **Expressive Routing**: Dynamic routes with parameters (`/user/[id]`, `/api/[...path]`).
 - **Built-in Middleware**: CORS, JSON, URL-encoded, and more out of the box.
@@ -24,7 +25,7 @@
 
 ### 1. Prerequisite: Install Bun
 
-OxarionJS requires [Bun](https://bun.sh) (v1.2.18 or higher).
+OxarionJS requires [Bun](https://bun.sh) (v1.2.19 or higher).
 If you don't have Bun installed, get it from [https://bun.sh](https://bun.sh).
 
 ### 2. Install OxarionJS
@@ -55,7 +56,7 @@ Oxarion.start({
     router.middlewareChain(
       "/",
       [Middleware.cors(), Middleware.json(), Middleware.urlencoded()],
-      true,
+      true // This means it will be applied to all routes
     );
   },
 });
@@ -85,7 +86,7 @@ Replace `<your-entry-file>.ts` with the name of your main TypeScript file.
 
 ## 📦 Requirements
 
-- **Bun**: v1.2.18 or higher
+- **Bun**: v1.2.19 or higher
   [Install Bun →](https://bun.sh)
 
 ---

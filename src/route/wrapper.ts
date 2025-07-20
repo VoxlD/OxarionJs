@@ -1,6 +1,8 @@
 import type { Method, Handler, OxarionRouter } from "../types";
 import { Router } from "./router";
 
+export const symbl_get_routes = Symbol("_getRoutes");
+
 export class RoutesWrapper {
   private readonly router = new Router();
 
@@ -17,7 +19,7 @@ export class RoutesWrapper {
     return this;
   }
 
-  getRoutes(): {
+  [symbl_get_routes](): {
     method: Method;
     path: string;
     handler: Handler;
