@@ -21,7 +21,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "bun src/index.ts",
-    "build": "./bundle.js",
+    "build": "bun run ./bundle.js",
     "test": "bun test",
     "prepublishOnly": "bun run build"
   },
